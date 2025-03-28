@@ -3,6 +3,7 @@ import './Pages/Home/Home'
 import Home from './Pages/Home/Home'
 import { Routes, Route } from 'react-router-dom'
 import Login from './Pages/Login/Login'
+import Player from './Pages/Player/Player'
 
 const App = () => {
   return (
@@ -10,8 +11,8 @@ const App = () => {
       <Routes>
       <Route path='/' element={<Home/>}/>  
       <Route path='/login' element={<Login/>}/>  
+      <Route path='/player/:id' element={<Player/>}/>  
          </Routes>
-       
     </div>
   )
 }
