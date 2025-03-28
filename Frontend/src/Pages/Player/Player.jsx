@@ -1,48 +1,56 @@
-import React, { useEffect,useState } from 'react'
-import './Player.css'
-import back_arrow_icon from '../../assets/back_arrow_icon.png'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import './Player.css';
+import back_arrow_icon from '../../assets/back_arrow_icon.png';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Player = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const {id}=useParams();
-  const navigate=useNavigate();
-
-const [apiData, setApiData] = useState({
-  name:'',
-  key:'',
-  published_at:'',
-  typeof:''
-})
+  const [apiData, setApiData] = useState({
+    name: '',
+    key: '',
+    published_at: '',
+    type: ''
+  });
 
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2OWE0Y2FlYmYyNTViNWY5YWUzMTljOGM1ZTg4M2M4MiIsIm5iZiI6MTc0MzE1NDY0My44Miwic3ViIjoiNjdlNjZkZDMxNGJiYTZhZTMxMDAyNTdkIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9._9rHmS1qSiBs4UFvOt4mhWkoimyicC0FgrHcxVg2DSE'
+      Authorization: import.meta.env.VITE_TMDB_AUTH_TOKEN,
     }
   };
-  
-  useEffect(()=>{
-    fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`, options)
-    .then(res => res.json())
-    .then(res => setApiData(res.results[0]))
-    .catch(err => console.error(err));
-  },[])
 
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_TMDB_API_URL}/movie/${id}/videos?language=en-US`, options)
+      .then(res => res.json())
+      .then(res => setApiData(res.results[0] || {})) // Handle empty results
+      .catch(err => console.error(err));
+  }, [id]);
 
   return (
     <div className='player'>
-      <img src={back_arrow_icon} alt="" onClick={()=>{navigate(-2)}} />
-      <iframe src={`https://www.youtube.com/embed/${apiData.key}`} width='90%' height='90%' title='trailer' frameBorder='0' allowFullScreen></iframe>
+      <img src={back_arrow_icon} alt="Back" onClick={() => navigate(-2)} />
+      {apiData.key ? (
+        <iframe 
+          src={`${import.meta.env.VITE_YOUTUBE_EMBED_URL}${apiData.key}`} 
+          width='90%' 
+          height='90%' 
+          title='trailer' 
+          frameBorder='0' 
+          allowFullScreen
+        ></iframe>
+      ) : (
+        <p>Trailer not available</p>
+      )}
       <div className="player-info">
-        <p>{apiData.published_at.slice(0,10)}</p>
-        <p>{apiData.name}</p>
-        <p>{apiData.type}</p>
-
+        <p>{apiData.published_at ? apiData.published_at.slice(0, 10) : 'N/A'}</p>
+        <p>{apiData.name || 'No Title Available'}</p>
+        <p>{apiData.type || 'Unknown Type'}</p>
       </div>
     </div>
-  )
+  );
 }
 
-export default Player
+export default Player;
