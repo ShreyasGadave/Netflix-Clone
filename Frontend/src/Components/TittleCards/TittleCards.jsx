@@ -29,7 +29,7 @@ const TittleCards = ({ tittle, category }) => {
   }, []);
 
   return (
-    <div className="titlecards">
+    <div className="title-cards">
       <h2>{tittle ? tittle : "Popular on Netflix"}</h2>
       <div className="card-list" ref={cardRef}>
         {apiData.map((card, index) => {
